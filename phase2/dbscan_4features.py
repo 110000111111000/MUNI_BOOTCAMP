@@ -37,7 +37,10 @@ scaler = MinMaxScaler()
 #scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 #print('X four Features after normalize:', X_scaled)
-print(ndim(X_scaled))
+#print(X_scaled.ndim)
+print(X_scaled.shape)
+df_X_scaled = pd.DataFrame(scaler.fit_transform(X), columns=X.columns)
+print(df_X_scaled.columns)
 
 
 ## plot k_distance graph to have an idea of epsilon range
@@ -129,8 +132,7 @@ plt.text(-0.15, 1.1, f'Silhouette Score: {best_silhouette:.2f}', ha='left', va='
 plt.title('DBSCAN Clustering', fontsize= 9, fontweight='bold')
 plt.xlabel('Annual Income (k$)', fontsize= 9, fontweight='bold' )
 plt.ylabel('Spending Score (1-100)', fontsize= 9, fontweight='bold')
-#plt.colorbar(label='Cluster Label')
-#plt.show()          
+plt.show()          
 
 ## Visualize the clusters in 3D using Plotly
 labels = best_dict['best_labels']
@@ -139,12 +141,12 @@ df['Cluster'] = labels
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
-print(ndim(X_scaled))
+
 
 scatter = ax.scatter(
-    df['Annual Income (k$)'], 
-    df['Spending Score (1-100)'], 
-    df['Age'], 
+    df_X_scaled['Annual Income (k$)'], 
+    df_X_scaled['Spending Score (1-100)'], 
+    df_X_scaled['Age'], 
     c=df['Cluster'], 
     cmap='viridis'
 )
@@ -159,6 +161,40 @@ cbar = fig.colorbar(scatter, ax=ax, pad=0.1)
 cbar.set_label('Cluster')
 plt.show()
 
+
+## Visualize the clusters in 3D using Plotly
+labels = best_dict['best_labels']
+df['Cluster'] = labels
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+
+
+scatter = ax.scatter(
+    df_X_scaled['Annual Income (k$)'], 
+    df_X_scaled['Spending Score (1-100)'], 
+    df_X_scaled['Gender'], 
+    c=df['Cluster'], 
+    cmap='viridis'
+)
+
+ax.set_xlabel('Annual Income (k$)')
+ax.set_ylabel('Spending Score (1-100)')
+ax.set_zlabel('Age')
+plt.title('3D Scatter Plot with DBSCAN Clustering')
+
+# Create a color bar
+cbar = fig.colorbar(scatter, ax=ax, pad=0.1)
+cbar.set_label('Cluster')
+plt.show()
+
+
+
+
+
+
+#graph matrix
 X_scaled_df = pd.DataFrame(X_scaled, columns=['Annual Income (k$)', 'Spending Score (1-100)', 'Gender', 'Age'])
 
 attributes = ["Age", "Gender", "Annual Income (k$)",
