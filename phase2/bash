@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Specify the corrupted zip file
+corrupted_zip="dbscan"
+
+# Specify the new zip file name
+new_zip="repaired.zip"
+
+# Create a new empty zip file
+zip -r $new_zip
+
+# Attempt to add files from the corrupted zip to the new zip
+unzip -t $corrupted_zip | grep 'OK' | awk '{print $2}' | xargs -I{} zip $new_zip {}
+
+# Attempt to extract the contents of the new zip file
+unzip $new_zip
+
