@@ -36,7 +36,9 @@ X = df[['Annual Income (k$)', 'Spending Score (1-100)', 'Gender', 'Age']]
 scaler = MinMaxScaler()
 #scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
-#print('X two Features after normalize:', X_scaled)
+#print('X four Features after normalize:', X_scaled)
+print(ndim(X_scaled))
+
 
 ## plot k_distance graph to have an idea of epsilon range
 k = 5
@@ -128,7 +130,7 @@ plt.title('DBSCAN Clustering', fontsize= 9, fontweight='bold')
 plt.xlabel('Annual Income (k$)', fontsize= 9, fontweight='bold' )
 plt.ylabel('Spending Score (1-100)', fontsize= 9, fontweight='bold')
 #plt.colorbar(label='Cluster Label')
-plt.show()          
+#plt.show()          
 
 ## Visualize the clusters in 3D using Plotly
 labels = best_dict['best_labels']
@@ -136,6 +138,8 @@ df['Cluster'] = labels
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
+
+print(ndim(X_scaled))
 
 scatter = ax.scatter(
     df['Annual Income (k$)'], 
@@ -162,7 +166,7 @@ attributes = ["Age", "Gender", "Annual Income (k$)",
 
 scatter_matrix(X_scaled_df, figsize=(12, 8),diagonal='kde', alpha=0.8)
 #save_fig("scatter_matrix_plot")  # extra code
-plt.show()
+#plt.show()
 
 
 
