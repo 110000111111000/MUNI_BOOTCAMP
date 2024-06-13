@@ -1,4 +1,4 @@
-import pandas as pd
+import pandas as pd 
 import matplotlib.pyplot as plt
 import numpy as np 
 import itertools
@@ -12,9 +12,9 @@ from sklearn.preprocessing import MinMaxScaler
 #from sklearn.preprocessing import StandardScaler
 from matplotlib.colors import ListedColormap, BoundaryNorm
 
-from sklearn.model_selection import GridSearchCV
-from sklearn.metrics import adjusted_rand_score
-from sklearn.model_selection import ParameterGrid
+#from sklearn.model_selection import GridSearchCV
+#from sklearn.metrics import adjusted_rand_score
+#from sklearn.model_selection import ParameterGrid
 
 ## Get the data
 dfwithna = pd.read_csv('Mall_Customers.csv')
@@ -25,26 +25,22 @@ df = dfwithna.dropna()
 #print('Number of raws after dropping nan value',len(df))
 
 df["Age"]= df["Age"].astype(np.int64)
-
 df['Gender'] = df['Gender'].map({'Male': 0, 'Female': 1})
 df['Gender']= df["Gender"].astype(np.int64)
 
-## Select two features for clustering
-X = df[['Annual Income (k$)', 'Spending Score (1-100)', 'Gender', 'Age']]
+## Select three features for clustering
+X = df[['Annual Income (k$)', 'Spending Score (1-100)','Age']]
 
 ## Normalize the data
 scaler = MinMaxScaler()
 #scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
-#print('X four Features after normalize:', X_scaled)
-#print(X_scaled.ndim)
-print(X_scaled.shape)
+
 df_X_scaled = pd.DataFrame(scaler.fit_transform(X), columns=X.columns)
 print(df_X_scaled.columns)
 
-
 ## plot k_distance graph to have an idea of epsilon range
-k = 5
+k = 10
 neighbors = NearestNeighbors(n_neighbors=k)
 neighbors_fit = neighbors.fit(X_scaled)
 distances, indices = neighbors_fit.kneighbors(X_scaled)
@@ -52,11 +48,10 @@ distances, indices = neighbors_fit.kneighbors(X_scaled)
 distances = np.sort(distances, axis=0)
 distances = distances[:,1]
 plt.plot(distances)
-#plt.show()
-
+plt.show()
 
 ## Grid search
-epsilons = np.linspace(0.01,0.3, num = 1000)
+epsilons = np.linspace(0.1,0.2, num = 1000)
 #print(epsilons)
 min_samples = np.arange(2,20, step = 2)
 #print(min_samples)
@@ -109,6 +104,7 @@ db = DBSCAN(eps=best_dict['best_epsilon'], min_samples= best_dict['best_min_samp
 ## Visualize the clusters
 unique_labels = set(best_dict['best_labels'])
 num_clusters = len(unique_labels) - (1 if -1 in unique_labels else 0)
+print('num_clusters:',num_clusters)
 
 fig = plt.figure(figsize=(8, 6))
 colors = ['#000000'] + [plt.cm.tab20(i) for i in range(num_clusters)]
@@ -132,7 +128,7 @@ plt.text(-0.15, 1.1, f'Silhouette Score: {best_silhouette:.2f}', ha='left', va='
 plt.title('DBSCAN Clustering', fontsize= 9, fontweight='bold')
 plt.xlabel('Annual Income (k$)', fontsize= 9, fontweight='bold' )
 plt.ylabel('Spending Score (1-100)', fontsize= 9, fontweight='bold')
-plt.show()          
+plt.show()   
 
 ## Visualize the clusters in 3D using Plotly
 labels = best_dict['best_labels']
@@ -161,55 +157,6 @@ cbar = fig.colorbar(scatter, ax=ax, pad=0.1)
 cbar.set_label('Cluster')
 plt.show()
 
-
-## Visualize the clusters in 3D using Plotly
-labels = best_dict['best_labels']
-df['Cluster'] = labels
-
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-
-
-
-scatter = ax.scatter(
-    df_X_scaled['Annual Income (k$)'], 
-    df_X_scaled['Spending Score (1-100)'], 
-    df_X_scaled['Gender'], 
-    c=df['Cluster'], 
-    cmap='viridis'
-)
-
-ax.set_xlabel('Annual Income (k$)')
-ax.set_ylabel('Spending Score (1-100)')
-ax.set_zlabel('Age')
-plt.title('3D Scatter Plot with DBSCAN Clustering')
-
-# Create a color bar
-cbar = fig.colorbar(scatter, ax=ax, pad=0.1)
-cbar.set_label('Cluster')
-plt.show()
-
-
-
-
-
-
-
-#graph matrix
-X_scaled_df = pd.DataFrame(X_scaled, columns=['Annual Income (k$)', 'Spending Score (1-100)', 'Gender', 'Age'])
-
-attributes = ["Age", "Gender", "Annual Income (k$)",
-              "Spending Score (1-100)"]
-
-scatter_matrix(X_scaled_df, figsize=(12, 8),diagonal='kde', alpha=0.8)
-#save_fig("scatter_matrix_plot")  # extra code
-#plt.show()
-
-
-
-
-
-
-
+       
 
 
