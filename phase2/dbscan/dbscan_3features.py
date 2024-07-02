@@ -51,7 +51,7 @@ plt.plot(distances)
 plt.show()
 
 ## Grid search
-epsilons = np.linspace(0.1,0.2, num = 1000)
+epsilons = np.linspace(0.01,0.3, num = 1000)
 #print(epsilons)
 min_samples = np.arange(2,20, step = 2)
 #print(min_samples)
